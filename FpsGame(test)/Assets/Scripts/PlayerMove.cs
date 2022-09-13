@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMove : MonoBehaviour
 {
@@ -18,12 +19,16 @@ public class PlayerMove : MonoBehaviour
     public float jumpPower = 10f;
 
     //상태 변수
-
     public bool isJumping = false;
+
+    public int hp = 20;
+    int maxHp = 20;
+    public Slider hpSlider;
 
     private void Start()
     {
         cc = GetComponent<CharacterController>();
+        hp = maxHp;
     }
 
     // Update is called once per frame
@@ -67,5 +72,12 @@ public class PlayerMove : MonoBehaviour
         //3. 이동속동 맞춰 이동
 
         cc.Move(dir * moveSpeed * Time.deltaTime);
+
+        hpSlider.value = (float)hp / (float)maxHp;
+    }
+
+    public void DamageAction(int damage)
+    {
+        hp -= damage;
     }
 }

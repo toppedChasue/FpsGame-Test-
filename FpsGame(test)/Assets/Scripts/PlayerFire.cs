@@ -9,6 +9,7 @@ public class PlayerFire : MonoBehaviour
     public GameObject bombFactroy;
 
     public float throwPower = 15f;
+    public int weaponPower = 5;
 
     public GameObject bulletEffect;
 
@@ -41,10 +42,21 @@ public class PlayerFire : MonoBehaviour
 
             if(Physics.Raycast(ray, out hitInfo))
             {
-                //피견 이펙트의 위치를 레이가 부딪힌 지점으로 이동시킨다.
-                bulletEffect.transform.position = hitInfo.point;
-                //재생
-                ps.Play();
+                if(hitInfo.transform.gameObject.layer == LayerMask.NameToLayer("Enemy"))
+                {
+                    EnemyFSM eFSM = hitInfo.transform.GetComponent<EnemyFSM>();
+                    eFSM.HitEnemy(weaponPower);
+                }
+                else
+                {
+                    //피견 이펙트의 위치를 레이가 부딪힌 지점으로 이동시킨다.
+                    bulletEffect.transform.position = hitInfo.point;
+
+                    bulletEffect.transform.forward = hitInfo.normal;
+                    //재생
+                    ps.Play();
+                }
+
             }
         }
     }
