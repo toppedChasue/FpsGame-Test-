@@ -12,6 +12,10 @@ public class PlayerRotate : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.gm.gState != GameManager.GameState.Run)
+        {
+            return;
+        }
         //사용자의 마우스 입력을 받아 물체를 회전시킨다.
 
         //1. 마우스 입력을 받는다.

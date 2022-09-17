@@ -38,8 +38,13 @@ public class EnemyFSM : MonoBehaviour
 
     Transform player;
     Vector3 originPos;
+    Quaternion originRot;
 
     public float moveDistance = 20f;
+
+    Animator anim;
+
+    
 
     // Start is called before the first frame update
     void Start()
@@ -51,7 +56,10 @@ public class EnemyFSM : MonoBehaviour
         player = GameObject.Find("Player").transform;
 
         originPos = transform.position;
+        originRot = transform.rotation;
         hp = maxHp;
+
+        anim = transform.GetComponentInChildren<Animator>();
     }
 
     // Update is called once per frame
@@ -87,6 +95,7 @@ public class EnemyFSM : MonoBehaviour
         if(Vector3.Distance(transform.position, player.position) < findDistance)
         {
             m_State = EnemyState.Move;
+            anim.SetTrigger("IdleToMove");
         }
     }
 
@@ -99,13 +108,21 @@ public class EnemyFSM : MonoBehaviour
         }
         else if(Vector3.Distance(transform.position, player.position) > attackDistance)
         {
+            //방향구하기
             Vector3 dir = (player.position - transform.position).normalized;
+
+            //이동
             cc.Move(dir * moveSpeed * Time.deltaTime);
+
+            //플레이어를 향해 방향 전환
+            transform.forward = dir;
         }
         else
         {
             m_State = EnemyState.Attack;
             currentTime = attackDelay;
+
+            anim.SetTrigger("MoveToAttackDelay");
         }
     }
 
@@ -116,15 +133,23 @@ public class EnemyFSM : MonoBehaviour
             currentTime += Time.deltaTime;
             if (currentTime > attackDelay)
             {
-                player.GetComponent<PlayerMove>().DamageAction(attackPower);
+                //player.GetComponent<PlayerMove>().DamageAction(attackPower);
                 currentTime = 0;
+
+                anim.SetTrigger("StartAttack");
             }
         }
         else
         {
             m_State = EnemyState.Move;
             currentTime = 0;
+
+            anim.SetTrigger("AttackToMove");
         }
+    }
+    public void AttackAction()
+    {
+        player.GetComponent<PlayerMove>().DamageAction(attackPower);
     }
 
     void Return()
@@ -134,12 +159,16 @@ public class EnemyFSM : MonoBehaviour
             Vector3 dir = (originPos - transform.position).normalized;
 
             cc.Move(dir * moveSpeed * Time.deltaTime);
+            transform.forward = dir;
         }
         else
         {
             transform.position = originPos;
+            transform.rotation = originRot;
             hp = maxHp;
             m_State = EnemyState.Idle;
+
+            anim.SetTrigger("MoveToIdle");
         }
     }
     public void HitEnemy(int hitPower)

@@ -25,6 +25,9 @@ public class PlayerMove : MonoBehaviour
     int maxHp = 20;
     public Slider hpSlider;
 
+    //피격
+    public GameObject hitEffect;
+
     private void Start()
     {
         cc = GetComponent<CharacterController>();
@@ -34,6 +37,10 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (GameManager.gm.gState != GameManager.GameState.Run)
+        {
+            return;
+        }
         //이동키를 누르면 캐릭터 이동
 
         //1. 입력받기
@@ -76,8 +83,23 @@ public class PlayerMove : MonoBehaviour
         hpSlider.value = (float)hp / (float)maxHp;
     }
 
+    //플레이어 피격함수
     public void DamageAction(int damage)
     {
         hp -= damage;
+
+       if(hp > 0)
+        {
+            StartCoroutine(PlayHitEffect());
+        }
+    }
+
+    IEnumerator PlayHitEffect()
+    {
+        hitEffect.SetActive(true);
+
+        yield return new WaitForSeconds(0.3f);
+
+        hitEffect.SetActive(false);
     }
 }
