@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour
     {
         if(player.hp <= 0 )
         {
+            player.GetComponent<Animator>().SetFloat("MoveMotion", 0f);
+
             gameLabel.SetActive(true);
 
             gameText.text = "Game Over";

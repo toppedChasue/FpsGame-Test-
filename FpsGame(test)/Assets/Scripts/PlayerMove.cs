@@ -28,9 +28,12 @@ public class PlayerMove : MonoBehaviour
     //피격
     public GameObject hitEffect;
 
+
+    Animator anim;
     private void Start()
     {
         cc = GetComponent<CharacterController>();
+        anim = GetComponentInChildren<Animator>();
         hp = maxHp;
     }
 
@@ -50,6 +53,9 @@ public class PlayerMove : MonoBehaviour
         //2. 이동 방향 설정
         Vector3 dir = new Vector3(h, 0, v);
         dir = dir.normalized;
+
+        //이동 블랜딩 트리를 호출하고 벡터의 크기 값을 넘겨준다.
+        anim.SetFloat("MoveMotion", dir.magnitude);
 
         //2-1. 메인 카메라를 기준으로 방향을 변환한다.
 
